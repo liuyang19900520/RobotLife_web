@@ -5,7 +5,6 @@ import com.liuyang19900520.config.redis.RedisProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
-import org.apache.shiro.web.filter.authc.AnonymousFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.session.mgt.ServletContainerSessionManager;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -63,11 +62,12 @@ public class ShiroConfig {
 		bean.setUnauthorizedUrl("/unauthor");
 
 		Map<String, Filter> filters = Maps.newHashMap();
-		filters.put("perms", urlPermissionsFilter());
-		filters.put("anon", new AnonymousFilter());
+//		filters.put("perms", urlPermissionsFilter());
+//		filters.put("anon", new AnonymousFilter());
 		bean.setFilters(filters);
 
 		Map<String, String> chains = Maps.newHashMap();
+        chains.put("/money/**", "anon");
         chains.put("/druid/**", "anon");
         chains.put("/login", "anon");
         chains.put("/unauthor", "anon");

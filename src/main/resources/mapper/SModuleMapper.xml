@@ -5,12 +5,14 @@
 <mapper namespace="com.liuyang19900520.dao.SModuleDao">
 
 
-    <resultMap id="resultModule" type="com.liuyang19900520.domain.SModule" extends="com.liuyang19900520.dao.SUserDao.baseResult">
+    <resultMap id="resultModule" type="com.liuyang19900520.domain.SModule"
+               extends="com.liuyang19900520.dao.SUserDao.baseResult">
         <result property="moduleId" column="module_id"/>
         <result property="moduleName" column="module_name"/>
         <result property="parentId" column="parent_id"/>
         <result property="moduleLevel" column="module_level"/>
         <result property="moduleUrl" column="module_url"/>
+        <result property="moduleImg" column="module_img"/>
         <result property="moduleRank" column="module_rank"/>
     </resultMap>
 
@@ -20,9 +22,57 @@
             LEFT JOIN s_role sr ON sru.role_id = sr.role_id
             LEFT JOIN s_role_module srm ON sr.role_id = srm.role_id
             LEFT JOIN s_module sm ON sm.module_id = srm.module_id
-        WHERE sru.user_id = #{userId}
+        WHERE sru.user_id = #{userId} AND (sm.parent_id = '0')
+    </select>
+
+    <select id="listModules" resultMap="resultModule">
+
+        SELECT *
+        FROM s_module
+        WHERE 1=1
+        <if test="moduleId !=null and moduleId !=''">
+            AND module_id=#{moduleId}
+        </if>
+        <if test="parentId !=null and parentId !=''">
+            AND parent_id=#{parentId}
+        </if>
 
     </select>
+    <select id="selectModuleById" resultMap="resultModule">
+        SELECT *
+        FROM s_module
+        WHERE module_id = #{moduleId}
+
+    </select>
+
+    <insert id="insertModule" parameterType="com.liuyang19900520.domain.SModule">
+        INSERT INTO s_module (id, module_id, module_name, parent_id, module_level, module_url, module_rank, module_img, create_time, create_by, update_time, update_by, delete_flag)
+        VALUES
+            (#{id}, #{moduleId}, #{moduleName}, #{parentId}, #{moduleLevel}, #{moduleUrl}, #{moduleRank}, #{moduleImg},
+                    #{createTime}, #{createBy}, #{updateTime}, #{updateBy}, #{deleteFlag})
+    </insert>
+
+    <update id="updateModule">
+        UPDATE s_module
+        SET
+            module_name  = #{moduleName},
+            parent_id    = #{parentId},
+            module_level = #{moduleLevel},
+            module_url   = #{moduleUrl},
+            module_img   = #{moduleImg},
+            module_rank  = #{moduleRank},
+            update_time  = #{updateTime},
+            update_by    = #{updateBy},
+            delete_flag  = #{deleteFlag}
+        WHERE module_id = #{moduleId}
+    </update>
+
+    <update id="deleteModuleWithFlag">
+        UPDATE s_module
+        SET
+            delete_flag = #{deleteFlag}
+        WHERE module_id = #{moduleId}
+    </update>
 
 
 </mapper>

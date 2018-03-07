@@ -1,7 +1,7 @@
 package com.liuyang19900520.config.shiro;
 
 import com.liuyang19900520.domain.SUser;
-import com.liuyang19900520.service.SUserService;
+import com.liuyang19900520.service.sys.SUserService;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;

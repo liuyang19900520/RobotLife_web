@@ -1,8 +1,9 @@
 package com.liuyang19900520.web;
 
+import com.liuyang19900520.common.ResultVo;
 import com.liuyang19900520.common.utils.LPwsUtils;
 import com.liuyang19900520.domain.SUser;
-import com.liuyang19900520.service.SUserService;
+import com.liuyang19900520.service.sys.SUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
@@ -12,17 +13,31 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import static com.liuyang19900520.common.ResultVo.FAILURE;
+import static com.liuyang19900520.common.ResultVo.SUCCESS;
+import static com.liuyang19900520.common.SysConstant.LOGIN_USER_KEY;
 
 @Slf4j
 @Controller
 public class LoginController {
 
-   @Autowired
+    @Autowired
     SUserService sUserService;
 
+    @GetMapping("/")
+    public String index(HttpSession session) {
+        if (session.getAttribute(LOGIN_USER_KEY) != null) {
+            log.debug(session.getAttribute(LOGIN_USER_KEY).toString());
+            return "starter";
+        }
+        return "redirect:/login";
+    }
 
     @GetMapping("/login")
     public String loginForm() {
@@ -30,13 +45,14 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String login(SUser user, BindingResult bindingResult, RedirectAttributes redirectAttributes,HttpServletRequest request) {
+    @ResponseBody
+    public ResultVo login(SUser user, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpServletRequest request) {
         if (bindingResult.hasErrors()) {
-            return "login";
+            return new ResultVo(FAILURE,null,null,null);
         }
         String loginName = user.getUserName();
         log.info("准备登陆用户 => {}", loginName);
-        UsernamePasswordToken token = new UsernamePasswordToken(loginName, LPwsUtils.MD5Pwd(user.getPassword(),loginName));
+        UsernamePasswordToken token = new UsernamePasswordToken(loginName, LPwsUtils.MD5Pwd(user.getPassword(), loginName));
         //获取当前的Subject
         Subject currentUser = SecurityUtils.getSubject();
         try {
@@ -67,13 +83,12 @@ public class LoginController {
         //验证是否登录成功
         if (currentUser.isAuthenticated()) {
             log.info("用户[" + loginName + "]登录认证通过(这里可以进行一些认证通过后的一些系统参数初始化操作)");
-
             SUser usrLogined = sUserService.findAllInfoByAccount(loginName);
-            request.getSession().setAttribute("LOGIN_USER_KEY",usrLogined);
-           return "redirect:/index";
+            request.getSession().setAttribute(LOGIN_USER_KEY, usrLogined);
+            return new ResultVo(SUCCESS,null,null,null);
         } else {
             token.clear();
-            return "redirect:/login";
+            return new ResultVo(FAILURE,null,null,null);
         }
     }
 
@@ -84,7 +99,5 @@ public class LoginController {
         redirectAttributes.addFlashAttribute("message", "您已安全退出");
         return "redirect:/login";
     }
-
-
 
 }

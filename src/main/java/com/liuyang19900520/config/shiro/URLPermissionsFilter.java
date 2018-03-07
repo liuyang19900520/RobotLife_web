@@ -1,6 +1,6 @@
 package com.liuyang19900520.config.shiro;
 
-import com.liuyang19900520.service.SUserService;
+import com.liuyang19900520.service.sys.SUserService;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;

@@ -92,7 +92,8 @@ public class DruidConfig {
 		druidDataSource.setMaxOpenPreparedStatements(maxOpenPreparedStatements);
 		druidDataSource.setConnectionProperties(connectionProperties);
 		try {
-			druidDataSource.setFilters(filters);// 配置防火墙和统计插件
+            // 配置防火墙和统计插件
+			druidDataSource.setFilters(filters);
 		} catch (SQLException e) {
 			log.error(e.getMessage());
 		}

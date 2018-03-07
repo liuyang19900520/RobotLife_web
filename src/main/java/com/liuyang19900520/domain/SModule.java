@@ -3,6 +3,7 @@ package com.liuyang19900520.domain;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author liuya
@@ -10,9 +11,13 @@ import java.io.Serializable;
 @Data
 public class SModule extends BaseEntity implements Serializable {
 
-    /** 路径 */
+    /**
+     * 路径
+     */
     public static final String URL_TYPE = "URL";
-    /** 功能点 */
+    /**
+     * 功能点
+     */
     public static final String FUNCTION_TYPE = "FUNCTION";
 
     private Long id;
@@ -27,6 +32,11 @@ public class SModule extends BaseEntity implements Serializable {
 
     private String moduleUrl;
 
+    private String moduleImg;
+
     private Integer moduleRank;
+
+    private List<SModule> childrenModule;
+
 
 }

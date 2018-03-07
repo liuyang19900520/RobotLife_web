@@ -10,4 +10,6 @@ public interface SUserDao {
 
     int insertUser(SUser user);
 
+
+
 }
